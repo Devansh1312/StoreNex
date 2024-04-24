@@ -1,0 +1,56 @@
+@extends('admin.layouts.app')
+@section('content')
+
+<link rel="stylesheet" href="{{asset('admin/css/viewstaff.css')}}">
+<!-- Content Wrapper. Contains page content -->
+<div class="wrapper">
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+
+        <div class="page-content page-container" id="page-content">
+            <div class="padding">
+                <div class="row container d-flex justify-content-center">
+                    <div class="col-xl-12 col-md-12">
+                        <div class="card user-card-full">
+                            <div class="row m-l-0 m-r-0">
+                                <div class="col-sm-4 bg-c-lite-green user-profile">
+                                    <div class="card-block text-center text-white">
+                                        <div class="m-b-25">
+                                            <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius" alt="User-Profile-Image">
+                                        </div>
+                                        <h6 class="f-w-600">{{$Cms_page->title}}</h6>
+                                        <p>Title of Page</p>
+                                        <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="card-block">
+                                        <h6 class="m-b-20 p-b-5 b-b-default f-w-600">{{$Cms_page->title}}</h6>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <p class="m-b-10 f-w-600">Content</p>
+                                                <h6>
+                                                {!! $Cms_page->content !!}
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <button class="btn btn-primary" onclick="window.location='{{ route('cms') }}'">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
