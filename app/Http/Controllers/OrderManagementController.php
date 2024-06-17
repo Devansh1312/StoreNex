@@ -32,10 +32,12 @@ class OrderManagementController extends Controller
     }
 
     public function transactions()
-    {
-        $transactions = Transaction::orderBy('created_at', 'desc')->get(); 
-        return response()->json($transactions);
-    }
+{
+    $transactions = Transaction::orderByRaw("CASE WHEN order_status = 'pending' THEN 0 ELSE 1 END, order_status DESC")->get(); 
+    return response()->json($transactions);
+}
+
+
 
     // View transaction
     public function ViewTransaction($id)

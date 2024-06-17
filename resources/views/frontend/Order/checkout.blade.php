@@ -64,6 +64,7 @@
                         </div>
                         <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
                         <input type="hidden" name="total" value="{{ $cartItems->sum('total_amount') }}">
+                        <input type="hidden" name="payment_method" id="payment_method">
                     </div>
                     <div class="col-lg-4">
                         <div class="order_box">
@@ -205,5 +206,13 @@
             e.preventDefault(); // Prevent form submission if validation fails
         }
     }
+
+    // Event listeners for payment method buttons
+    document.querySelectorAll('.primary-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var paymentMethod = this.value; // Get the value of the clicked button
+            document.getElementById('payment_method').value = paymentMethod; // Set the value of the hidden input field
+        });
+    });
 </script>
 @endsection

@@ -94,8 +94,8 @@
                           case 'Paid':
                               badgeClass = 'badge-success';
                               break;
-                          case 'Canceled':
-                              badgeClass = 'badge-danger';
+                          case 'COD':
+                              badgeClass = 'badge-success';
                               break;
                           default:
                               badgeClass = 'badge-secondary';
@@ -132,9 +132,9 @@
                       "paging": true,
                       "lengthChange": false,
                       "searching": true,
-                      "ordering": true,
+                      "ordering": false,
                       "info": true,
-                      "autoWidth": false,
+                      "autoWidth": true,
                       "responsive": true,
                   });
               },

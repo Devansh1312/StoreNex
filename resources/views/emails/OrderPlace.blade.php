@@ -174,7 +174,7 @@
 														<tr>
 															<td class="pad" style="padding-bottom:10px;padding-left:10px;padding-top:10px;width:100%;padding-right:0px;">
 																<div class="alignment" align="center" style="line-height:10px">
-																	<div class="fullWidth" style="max-width: 54.25px;"><img src="{{ asset('storage/SystemSetting/systemlogo.png') }}" style="display: block; height: auto; border: 0; width: 100%;" width="54.25" alt="Your Logo" title="Your Logo"></div>
+																	<div class="fullWidth" style="max-width: 54.25px;"><img src="https://d15k2d11r6t6rl.cloudfront.net/pub/bfra/js8y22ax/g2s/2xc/6h8/StoreNex.png" style="display: block; height: auto; border: 0; width: 100%;" width="54.25" alt="Your Logo" title="Your Logo"></div>
 																</div>
 															</td>
 														</tr>
