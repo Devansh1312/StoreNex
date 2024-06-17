@@ -81,8 +81,8 @@
                             </td>
                             <!-- Remove product -->
                             <td>
-                                <span class="remove_item_btn" data-id="{{ $cartItem->id }}" style="cursor: pointer; background: linear-gradient(to right, #7A048D, #C09EBA); padding: 5px; border-radius: 50%;">
-                                    <i class="fas fa-broom" style="color: white;"></i>
+                                <span class="remove_item_btn" data-id="{{ $cartItem->id }}" style="cursor: pointer;padding: 5px; border-radius: 50%;">
+                                    <i class="fas fa-trash" style="color: rgb(0, 0, 0);"></i>
                                 </span>
                             </td>
                         </tr>

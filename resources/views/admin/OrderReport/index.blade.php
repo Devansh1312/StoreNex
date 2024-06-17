@@ -1,4 +1,5 @@
 @extends('admin.layouts.app')
+<meta charset="UTF-8">
 
 @section('content')
 <div class="wrapper">
@@ -7,9 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h3 class="m-0">
-                            <b>Order Report</b>
-                        </h3>
+                        <h3 class="m-0"><b>Order Report</b></h3>
                     </div>
                 </div>
             </div>
@@ -20,7 +19,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="order_status">Order Status:</label>
-                            <select class="form-control" name="order_status" id="order_status">
+                            <select class="form-control" id="order_status">
                                 <option value="">Select Status</option>
                                 <option value="Pending">Pending</option>
                                 <option value="Accepted">Accepted</option>
@@ -30,17 +29,27 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="start_date">Start Date:</label>
-                            <input type="date" class="form-control" name="start_date" id="start_date" value="{{ date('Y-m-d') }}">
+                            <label for="status">Payment Status:</label>
+                            <select class="form-control" id="status">
+                                <option value="">Select Status</option>
+                                <option value="Paid">Paid</option>
+                                <option value="COD">COD</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="start_date">Start Date:</label>
+                            <input type="date" class="form-control" id="start_date" value="{{ date('Y-m-d') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="end_date">End Date:</label>
-                            <input type="date" class="form-control" name="end_date" id="end_date" value="{{ date('Y-m-d') }}">
+                            <input type="date" class="form-control" id="end_date" value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2" style="margin-top: 25px;">
                         <div class="form-group d-flex justify-content-end">
                             <button id="applyBtn" class="btn btn-primary mr-2">Apply</button>
                             <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
@@ -59,6 +68,7 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Address</th>
+                            <th>Total</th>
                             <th>Payment Status</th>
                             <th>Order Status</th>
                             <th>Order Date</th>
@@ -72,131 +82,186 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        fetchTransactionList(); // Fetch all data initially
+    var dataTable;
 
-        // Apply button click event handler
-        $('#applyBtn').click(function() {
+    $(document).ready(function() {
+        // Initialize DataTable
+        initializeDataTable();
+
+        // Fetch all data initially
+        fetchTransactionList();
+
+        // Apply filters on click of apply button
+        $(document).on('click', '#applyBtn', function() {
             applyFilters();
         });
 
-        // Cancel button click event handler
-        $('#cancelBtn').click(function() {
+        // Reset filters on click of cancel button
+        $(document).on('click', '#cancelBtn', function() {
             resetFilters();
         });
+
+        // Download CSV on click of download button
+        $('#downloadCsvBtn').on('click', function() {
+            downloadCsv();
+        });
+
+        $('#downloadPdfBtn').on('click', function() {
+            generatePdf();
+        });
+
     });
 
-    function applyFilters() {
-        var orderStatus = $('#order_status').val(); // Get selected order status
-        var startDate = $('#start_date').val(); // Get selected start date
-        var endDate = $('#end_date').val(); // Get selected end date
+    function initializeDataTable() {
+        dataTable = $('#transactionTable').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "responsive": true,
+            "dom": 'Bfrtip', // Add buttons to the default DOM
+            "buttons": [
+                'csv', // Add CSV button
+            ]
+        });
+    }
 
-        // Fetch data based on selected order status and date range
-        fetchTransactionList(orderStatus, startDate, endDate);
+    function applyFilters() {
+        var orderStatus = $('#order_status').val();
+        var status = $('#status').val();
+        var startDate = $('#start_date').val();
+        var endDate = $('#end_date').val();
+
+        fetchTransactionList(orderStatus,status, startDate, endDate);
     }
 
     function resetFilters() {
-        // Reset form fields
+        $('#status').val('');
         $('#order_status').val('');
         $('#start_date').val('');
         $('#end_date').val('');
-
-        // Fetch all data
-        fetchTransactionList();
+        fetchTransactionList(); // Fetch all data again when filters are reset
     }
 
-    function fetchTransactionList(orderStatus = null, startDate = null, endDate = null) {
-        $.ajax({
-            type: 'get',
-            url: "{{ route('Orders') }}",
-            data: {
-                order_status: orderStatus, // Pass selected order status
-                start_date: startDate, // Pass selected start date
-                end_date: endDate // Pass selected end date
-            },
-            success: function(response) {
-                var tr = '';
-                for (var i = 0; i < response.length; i++) {
-                    var transaction = response[i];
-                    var id = transaction.id;
-                    var name = transaction.name;
-                    var email = transaction.email;
-                    var phone = transaction.phone;
-                    var address = '';
-                    if (transaction.addressline1) address += transaction.addressline1 + ', ';
-                    if (transaction.addressline2) address += transaction.addressline2 + ', ';
-                    if (transaction.city) address += transaction.city + ', ';
-                    if (transaction.district) address += transaction.district + ', ';
-                    if (transaction.zip_code) address += transaction.zip_code;
-                    var status = transaction.status;
-                    var order_status = transaction.order_status;
-                    var orderDate = formatDate(transaction.created_at);
+    function fetchTransactionList(orderStatus = '', status = '', startDate = '', endDate = '') {
+    $.ajax({
+        type: 'get',
+        url: "{{ route('Orders') }}",
+        data: {
+            order_status: orderStatus,
+            status: status,
+            start_date: startDate,
+            end_date: endDate
+        },
+        success: function(response) {
+            // Clear existing data
+            dataTable.clear().draw();
 
-                    var badgeClass = getStatusBadgeClass(status);
-                    var badgeClass1 = getOrderStatusBadgeClass(order_status);
-
-                    tr += '<tr>';
-                    tr += '<td>' + id + '</td>';
-                    tr += '<td>' + name + '</td>';
-                    tr += '<td>' + email + '</td>';
-                    tr += '<td>' + phone + '</td>';
-                    tr += '<td>' + address + '</td>';
-                    tr += '<td><span class="badge ' + badgeClass + '">' + status + '</span></td>';
-                    tr += '<td><span class="badge ' + badgeClass1 + '">' + order_status + '</span></td>';
-                    tr += '<td>' + orderDate + '</td>';
-                    tr += '</tr>';
+            // Populate table with new data
+            response.forEach(function(transaction) {
+                // Determine badge class based on status
+                var badgeClass = '';
+                switch (transaction.status) {
+                    case 'Pending':
+                        badgeClass = 'badge-secondary';
+                        break;
+                    case 'Paid':
+                        badgeClass = 'badge-success';
+                        break;
+                    case 'Canceled':
+                        badgeClass = 'badge-danger';
+                        break;
+                    default:
+                        badgeClass = 'badge-secondary';
+                        break;
+                }
+                
+                // Determine badge class based on order status
+                var orderBadgeClass = '';
+                switch (transaction.order_status) {
+                    case 'Pending':
+                        orderBadgeClass = 'badge-secondary';
+                        break;
+                    case 'Accepted':
+                        orderBadgeClass = 'badge-success';
+                        break;
+                    case 'Canceled':
+                        orderBadgeClass = 'badge-danger';
+                        break;
+                    default:
+                        orderBadgeClass = 'badge-secondary';
+                        break;
                 }
 
-                $('#transaction_data').html(tr);
+                dataTable.row.add([
+                transaction.id,
+                transaction.name,
+                transaction.email,
+                transaction.phone,
+                formatFullAddress(
+                    transaction.addressline1, 
+                    transaction.addressline2,
+                    transaction.city,
+                    transaction.district,
+                    transaction.zip_code,
+                ),
+                '<th style="font-family: Arial, sans-serif;">' +  number_format(transaction.total, 2) + '</th>', // Format total with currency symbol and 2 decimal places
+                '<span class="badge ' + badgeClass + '">' + transaction.status + '</span>',
+                '<span class="badge ' + orderBadgeClass + '">' + transaction.order_status + '</span>',
+                formatDate(transaction.created_at)
+            ]).draw();  
 
-                if ($.fn.dataTable.isDataTable('#transactionTable')) {
-                    $('#transactionTable').DataTable().destroy();
-                }
+            });
+        },
+        error: function(error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+}
 
-                $('#transactionTable').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
-            },
-            error: function(error) {
-                console.error('Error fetching data:', error);
-            }
-        });
-    }
 
     function formatDate(dateString) {
         return moment(dateString).format('DD-MMM-YYYY hh:mm A').toUpperCase();
     }
 
-    function getStatusBadgeClass(status) {
-        switch (status) {
-            case 'Pending':
-                return 'badge-secondary';
-            case 'Paid':
-                return 'badge-success';
-            case 'Canceled':
-                return 'badge-danger';
-            default:
-                return 'badge-secondary';
-        }
+    function formatFullAddress(address1, address2, city, district, zip) {
+        const parts = [address1, address2, city, district, zip];
+        const cleanParts = parts.filter(part => part); // Remove any undefined or empty strings
+        return cleanParts.join(', '); // Join all parts with a comma and space
     }
 
-    function getOrderStatusBadgeClass(orderStatus) {
-        switch (orderStatus) {
-            case 'Pending':
-                return 'badge-secondary';
-            case 'Accepted':
-                return 'badge-success';
-            case 'Canceled':
-                return 'badge-danger';
-            default:
-                return 'badge-secondary';
-        }
+    function downloadCsv() {
+        // Trigger CSV download using DataTables buttons extension
+        dataTable.button('.buttons-csv').trigger();
     }
+    function number_format(number, decimals, dec_point, thousands_sep) {
+    // Set default values if not provided
+    decimals = decimals || 0;
+    dec_point = dec_point || '.';
+    thousands_sep = thousands_sep || ',';
+
+    // Convert to number
+    number = parseFloat(number);
+
+    // Check if the number is finite
+    if (!isFinite(number) || (!number && number !== 0)) {
+        return '';
+    }
+
+    // Convert number to string
+    var str = number.toFixed(decimals);
+
+    // Split the integer and decimal parts
+    var parts = str.split('.');
+
+    // Format the integer part with thousand separators
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_sep);
+
+    // Join the integer and decimal parts
+    return parts.join(dec_point);
+}
+
 </script>
 @endsection

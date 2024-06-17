@@ -75,22 +75,24 @@
                         <p> Products </p>
                     </a>
                 </li>
-                {{--Shipping Management--}}
-                {{-- <li class="nav-item">
-                    <a href="" class="nav-link {{ Request::is('Shipping Management') ? 'active' : '' }}"> <i
-                            class="nav-icon fas fa-truck"></i>
-                        <p> Shipping </p>
-                    </a>
-                </li> --}} 
                 {{--Order Management--}}
-                <li class="nav-item">
-                    <a href="{{route('OrderManagement')}}"
-                        class="nav-link {{ Request::is('Order-Management','view-transaction*','edit-transaction*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-shopping-cart"></i>
-                        <p> Order Management </p>
+                <li class="nav-item" style="position: relative;">
+                    @php
+                        // Assuming you have a Transaction model related to transactions table
+                        $totalPendingOrders = \App\Models\Transaction::where('order_status', 'pending')->count();
+                    @endphp
+                    <a href="{{ route('OrderManagement') }}" class="nav-link {{ Request::is('Order-Management','view-transaction*','edit-transaction*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-shopping-cart" style="position: relative;">
+                            @if ($totalPendingOrders > 0)
+                                <span class="badge" style="background-color: red; color: white; font-size: 0.8em; position: absolute; top: -10px; right: -10px; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                    {{ $totalPendingOrders }}
+                                </span>
+                            @endif
+                        </i>
+                        <p style="margin:5px;">Order Management</p>
                     </a>
-                </li>
-                 {{--Order Management--}}
+                </li>                                             
+                {{--Order Management--}}
                  <li class="nav-item">
                     <a href="{{route('OrderReports')}}"
                         class="nav-link {{ Request::is('Order-Report','Orders*') ? 'active' : '' }}">
@@ -120,7 +122,7 @@
                     <a href="{{ route('HomePageBlog') }}"
                         class="nav-link {{ Request::is('Home-Page-Blog','view-Blog*','add-Blog','edit-Blog*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-home"></i>
-                        <p> Home Page Blogs</p>
+                        <p>Blogs</p>
                     </a>
                 </li>
 

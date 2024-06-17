@@ -88,7 +88,7 @@
               <div class="small-box box2 draggable-box">
                 <div class="inner">
                   <h3>₹{{ number_format( $CurrentIncome, 2) }}</h3>
-                  <p>Accepted Order Income</p>
+                  <p>Total Completed Order</p>
                 </div>
                 <div class="icon">
                   <i class="fas fa-shopping-bag"></i> <!-- Shopping Bag Icon -->
@@ -103,7 +103,7 @@
               <div class="small-box box3 draggable-box">
                 <div class="inner">
                   <h3>₹{{ number_format( $CurrentPendingIncome, 2) }}</h3>
-                  <p>Current Pending Income</p>
+                  <p>Total Pending Order</p>
                 </div>
                 <div class="icon">
                   <i class="fas fa-shopping-bag"></i> <!-- Shopping Bag Icon -->

@@ -25,6 +25,7 @@
                         <tr>
                             <th scope="col">Product</th>
                             <th scope="col">Price</th>
+                            <th scope="col">Add to Cart</th>
                             <th scope="col">Remove</th>
                         </tr>
                     </thead>
@@ -54,12 +55,24 @@
                             <td>
                                 <h5>₹{{ number_format($wishlistItem->product->price, 2) }}</h5>
                             </td>
+                            <td>
+                                <!-- Link triggers the hidden form submission for adding to cart -->
+                                <a class="add-to-cart-btn" style="cursor: pointer; display: inline-block; padding: 5px; border-radius: 50%;" onclick="event.preventDefault(); document.getElementById('add-to-cart-form-{{ $wishlistItem->product_id }}').submit();">
+                                    <i class="ti-bag" style="color: rgb(0, 0, 0);"></i>
+                                    <span class="hover-text"></span>
+                                </a>
+                            
+                                <!-- Hidden form for adding item to cart -->
+                                <form id="add-to-cart-form-{{ $wishlistItem->product_id }}" action="{{ route('cart.add', ['productId' => base64_encode($wishlistItem->product_id)]) }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </td>                            
                             <!-- Remove product from wishlist -->
                             <td>
-                                <span class="remove_item_btn" data-id="{{ $wishlistItem->id }}" style="cursor: pointer; background: linear-gradient(to right, #7A048D, #C09EBA); padding: 5px; border-radius: 50%;" onclick="removeFromWishlist({{ $wishlistItem->product_id }})">
-                                    <i class="fas fa-broom" style="color: white;"></i>
+                                <span class="remove_item_btn" data-id="{{ $wishlistItem->id }}" style="cursor: pointer; padding: 5px; border-radius: 50%;" onclick="removeFromWishlist({{ $wishlistItem->product_id }})">
+                                    <i class="fas fa-trash" style="color: rgb(0, 0, 0);"></i>
                                 </span>
-                            </td>
+                            </td>                            
                         </tr>
                         <!-- End of wishlist item row -->
                         @endforeach

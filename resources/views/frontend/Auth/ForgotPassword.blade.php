@@ -71,10 +71,9 @@
   cursor: pointer;
   color: #fff;
   font-size: 16px;
-  text-transform: uppercase;
-  width: 80px;
+  width: auto;
   border: 0;
-  padding: 10px 0;
+  padding: 10px 5px;
   margin-top: 10px;
   margin-left: -5px;
   border-radius: 5px;
@@ -152,7 +151,7 @@
                             <img src="{{ asset('storage/SystemSetting/systemlogo.png') }}" alt="Logo">
                         </a>
                         <input style="margin-top: 70px; border: 2px solid #000;" type="text" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'"> @error('email') <div class="text-danger">{{ $message }}</div> @enderror
-                        <button style="margin-top:20px;">Forgot</button>
+                        <button style="margin-top:20px;">Forgot Password</button>
                     </form>
                 </div>
             </div>

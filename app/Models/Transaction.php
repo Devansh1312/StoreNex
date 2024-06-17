@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {
@@ -23,6 +24,11 @@ class Transaction extends Model
     public function details()
     {
         return $this->hasMany(TransactionDetail::class);
+    }
+
+    public function formattedDate()
+    {
+        return Carbon::parse($this->created_at)->format('DD-MMM-YYYY hh:mm A');
     }
 
 }
